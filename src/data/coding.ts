@@ -282,5 +282,175 @@ export const codingProblems: CodingProblem[] = [
       python: `n = int(input())\narr = [int(input()) for _ in range(n - 1)]\nprint(n * (n + 1) // 2 - sum(arr))`
     },
     explanation: "The sum of 1 to N is N*(N+1)/2. Subtract the actual sum of the array from this expected sum — the difference is the missing number. O(n) time, O(1) space. A classic TCS favourite!"
+  },
+  {
+    id: 26,
+    title: "Rotate Array by K Steps",
+    problemStatement: "Given an array of N integers, rotate the array to the right by K steps, where K is non-negative.",
+    example: "Input: N=5, K=2, Array=[1, 2, 3, 4, 5]\nOutput: [4, 5, 1, 2, 3]",
+    constraints: "1 <= N <= 10^5, 0 <= K <= 10^5",
+    solution: {
+      c: `#include<stdio.h>\nvoid reverse(int arr[], int start, int end) {\n    while (start < end) {\n        int temp = arr[start];\n        arr[start] = arr[end];\n        arr[end] = temp;\n        start++; end--;\n    }\n}\nint main() {\n    int n, k;\n    scanf("%d %d", &n, &k);\n    int arr[n];\n    for (int i = 0; i < n; i++) scanf("%d", &arr[i]);\n    k = k % n;\n    reverse(arr, 0, n - 1);\n    reverse(arr, 0, k - 1);\n    reverse(arr, k, n - 1);\n    for (int i = 0; i < n; i++) printf("%d ", arr[i]);\n    return 0;\n}`,
+      python: `n, k = map(int, input().split())\narr = list(map(int, input().split()))\nk = k % n\nrotated = arr[-k:] + arr[:-k]\nprint(*rotated)`
+    },
+    explanation: "Using the reverse algorithm: first reverse the entire array. Then, reverse the first k elements. Lastly, reverse the remaining n-k elements. This achieves O(N) time and O(1) space complexity, which is highly optimal."
+  },
+  {
+    id: 27,
+    title: "Rotate Matrix 90 Degrees",
+    problemStatement: "Rotate a given N x N 2D matrix clockwise by 90 degrees in-place.",
+    example: "Input: [[1, 2], [3, 4]]\nOutput: [[3, 1], [4, 2]]",
+    constraints: "1 <= N <= 100",
+    solution: {
+      c: `#include<stdio.h>\nint main() {\n    int n;\n    scanf("%d", &n);\n    int mat[n][n];\n    for (int i = 0; i < n; i++)\n        for (int j = 0; j < n; j++) scanf("%d", &mat[i][j]);\n    for (int i = 0; i < n; i++) {\n        for (int j = i; j < n; j++) {\n            int temp = mat[i][j];\n            mat[i][j] = mat[j][i];\n            mat[j][i] = temp;\n        }\n    }\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < n / 2; j++) {\n            int temp = mat[i][j];\n            mat[i][j] = mat[i][n - 1 - j];\n            mat[i][n - 1 - j] = temp;\n        }\n    }\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < n; j++) printf("%d ", mat[i][j]);\n        printf("\\n");\n    }\n    return 0;\n}`,
+      python: `n = int(input())\nmat = [list(map(int, input().split())) for _ in range(n)]\n# Transpose\nfor i in range(n):\n    for j in range(i, n):\n        mat[i][j], mat[j][i] = mat[j][i], mat[i][j]\n# Reverse each row\nfor i in range(n):\n    mat[i].reverse()\nfor row in mat:\n    print(*row)`
+    },
+    explanation: "To rotate a matrix clockwise by 90 degrees, first perform a matrix transpose (swap elements across the diagonal: mat[i][j] with mat[j][i]). Next, reverse each row of the transposed matrix. Done!"
+  },
+  {
+    id: 28,
+    title: "Character Frequency Counter",
+    problemStatement: "Given a string, print the frequency of each character in the exact order of their first occurrence.",
+    example: "Input: apple\nOutput: a:1, p:2, l:1, e:1",
+    solution: {
+      c: `#include<stdio.h>\n#include<string.h>\nint main() {\n    char s[200];\n    scanf("%s", s);\n    int freq[256] = {0};\n    int len = strlen(s);\n    for(int i = 0; i < len; i++) freq[(unsigned char)s[i]]++;\n    for(int i = 0; i < len; i++) {\n        if (freq[(unsigned char)s[i]] > 0) {\n            printf("%c:%d ", s[i], freq[(unsigned char)s[i]]);\n            freq[(unsigned char)s[i]] = 0;\n        }\n    }\n    return 0;\n}`,
+      python: `s = input().strip()\nfrom collections import Counter\ncounts = Counter(s)\nseen = set()\noutput = []\nfor char in s:\n    if char not in seen:\n        output.append(f"{char}:{counts[char]}")\n        seen.add(char)\nprint(', '.join(output))`
+    },
+    explanation: "Calculate frequencies using a hashing dictionary or count array first. Then, loop through the original string, print the calculated frequency of the character, and set the counter/hash state to 'visited' (or 0) so it won't be printed again."
+  },
+  {
+    id: 29,
+    title: "Decimal to Base 17 Conversion",
+    problemStatement: "Given a decimal number N, convert it to its Base 17 representation. Use digits 0-9 and letters A-G to represent values 10-16 respectively.",
+    example: "Input: 30\nOutput: 1D\n(30 = 17 * 1 + 13, where 13 is D)",
+    constraints: "1 <= N <= 10^9",
+    solution: {
+      c: `#include<stdio.h>\nint main() {\n    long long n;\n    scanf("%lld", &n);\n    char base17[] = "0123456789ABCDEFG";\n    char res[100];\n    int index = 0;\n    if (n == 0) { printf("0"); return 0; }\n    while (n > 0) {\n        res[index++] = base17[n % 17];\n        n /= 17;\n    }\n    for (int i = index - 1; i >= 0; i--) printf("%c", res[i]);\n    return 0;\n}`,
+      python: `n = int(input())\nsymbols = "0123456789ABCDEFG"\nif n == 0:\n    print("0")\nelse:\n    res = []\n    while n > 0:\n        res.append(symbols[n % 17])\n        n //= 17\n    print("".join(reversed(res)))`
+    },
+    explanation: "This is a frequent TCS custom base conversion problem. Repeatedly perform modulo 17 to get the remainder, map the remainder to its base-17 symbol, and update N to N/17. Print the reverse of the collected symbols."
+  },
+  {
+    id: 30,
+    title: "Robot Coordinate Movement",
+    problemStatement: "A robot starts at (0, 0) and moves in steps. Step 1 moves right by 10 units. Step 2 moves up by 20 units. Step 3 moves left by 30 units. Step 4 moves down by 40 units. This spiral sequence continues: Step 5 moves right by 50 units, Step 6 moves up by 60 units, and so on. Given the total steps N, find the robot's final coordinate.",
+    example: "Input: 3\nOutput: (-20, 20)\n(moves: X+10 -> Y+20 -> X-30)",
+    constraints: "1 <= N <= 1000",
+    solution: {
+      c: `#include<stdio.h>\nint main() {\n    int n;\n    scanf("%d", &n);\n    int x = 0, y = 0;\n    int dist = 10;\n    char dir = 'R';\n    for (int i = 1; i <= n; i++) {\n        if (dir == 'R') { x += dist; dir = 'U'; }\n        else if (dir == 'U') { y += dist; dir = 'L'; }\n        else if (dir == 'L') { x -= dist; dir = 'D'; }\n        else if (dir == 'D') { y -= dist; dir = 'R'; }\n        dist += 10;\n    }\n    printf("(%d, %d)", x, y);\n    return 0;\n}`,
+      python: `n = int(input())\nx, y = 0, 0\ndist = 10\ndirections = ['R', 'U', 'L', 'D']\nfor i in range(n):\n    d = directions[i % 4]\n    if d == 'R': x += dist\n    elif d == 'U': y += dist\n    elif d == 'L': x -= dist\n    elif d == 'D': y -= dist\n    dist += 10\nprint(f"({x}, {y})")`
+    },
+    explanation: "Keep track of position (X, Y) and direction ('R', 'U', 'L', 'D'). Increase distance by 10 units at each step. Use simple index modulo math to toggle between direction states."
+  },
+  {
+    id: 31,
+    title: "Leap Year Checker",
+    problemStatement: "Determine if a given year Y is a leap year. A year is leap if it is divisible by 4, but not by 100 unless also divisible by 400. Print 'YES' or 'NO'.",
+    example: "Input: 1900\nOutput: NO\n\nInput: 2000\nOutput: YES",
+    solution: {
+      c: `#include<stdio.h>\nint main() {\n    int y;\n    scanf("%d", &y);\n    if ((y % 4 == 0 && y % 100 != 0) || (y % 400 == 0)) printf("YES");\n    else printf("NO");\n    return 0;\n}`,
+      python: `y = int(input())\nprint("YES" if (y % 4 == 0 and y % 100 != 0) or (y % 400 == 0) else "NO")`
+    },
+    explanation: "A leap year is divisible by 400 OR (divisible by 4 and not divisible by 100). Implement this single conditional logic directly. Excellent problem for base testing."
+  },
+  {
+    id: 32,
+    title: "Subarray with Given Sum",
+    problemStatement: "Given an unsorted array of positive integers, find a continuous subarray that adds up to a given sum S. Return the 1-based start and end index. If no subarray is found, print -1.",
+    example: "Input: S=12, Array=[1, 2, 3, 7, 5]\nOutput: 2 4\n(2+3+7 = 12)",
+    constraints: "1 <= N <= 10^5, 1 <= S <= 10^9",
+    solution: {
+      c: `#include<stdio.h>\nint main() {\n    int n, s;\n    scanf("%d %d", &n, &s);\n    int arr[n];\n    for(int i = 0; i < n; i++) scanf("%d", &arr[i]);\n    int start = 0, current_sum = 0;\n    for(int i = 0; i < n; i++) {\n        current_sum += arr[i];\n        while (current_sum > s && start < i) {\n            current_sum -= arr[start++];\n        }\n        if (current_sum == s) {\n            printf("%d %d", start + 1, i + 1);\n            return 0;\n        }\n    }\n    printf("-1");\n    return 0;\n}`,
+      python: `n, s = map(int, input().split())\narr = list(map(int, input().split()))\nstart, curr = 0, 0\nfound = False\nfor i, val in enumerate(arr):\n    curr += val\n    while curr > s and start < i:\n        curr -= arr[start]\n        start += 1\n    if curr == s:\n        print(start + 1, i + 1)\n        found = True\n        break\nif not found: print("-1")`
+    },
+    explanation: "We can solve this in linear time using a sliding window. Keep adding elements to `current_sum`. If `current_sum` exceeds the target sum `S`, subtract elements from the left of the window until the sum becomes less than or equal to `S`."
+  },
+  {
+    id: 33,
+    title: "First Non-Repeating Character",
+    problemStatement: "Find the first non-repeating character in a given string. If every character repeats, print -1.",
+    example: "Input: swiss\nOutput: w",
+    solution: {
+      c: `#include<stdio.h>\n#include<string.h>\nint main() {\n    char s[200];\n    scanf("%s", s);\n    int counts[256] = {0};\n    for(int i = 0; s[i]; i++) counts[(unsigned char)s[i]]++;\n    for(int i = 0; s[i]; i++) {\n        if (counts[(unsigned char)s[i]] == 1) {\n            printf("%c", s[i]);\n            return 0;\n        }\n    }\n    printf("-1");\n    return 0;\n}`,
+      python: `s = input().strip()\nfrom collections import Counter\ncounts = Counter(s)\nfor char in s:\n    if counts[char] == 1:\n        print(char)\n        break\nelse:\n    print("-1")`
+    },
+    explanation: "Use a two-pass approach. In the first pass, count frequencies of each character. In the second pass, iterate through the string again and return the first character whose count equals 1."
+  },
+  {
+    id: 34,
+    title: "Toggle Case of String",
+    problemStatement: "Given a string, toggle the letter cases (e.g. swap lowercase with uppercase, and uppercase with lowercase).",
+    example: "Input: TCSnqt\nOutput: tcsNQT",
+    solution: {
+      c: `#include<stdio.h>\n#include<ctype.h>\nint main() {\n    char s[200];\n    scanf("%s", s);\n    for (int i = 0; s[i]; i++) {\n        if (isupper(s[i])) s[i] = tolower(s[i]);\n        else if (islower(s[i])) s[i] = toupper(s[i]);\n    }\n    printf("%s", s);\n    return 0;\n}`,
+      python: `s = input().strip()\nprint(s.swapcase())`
+    },
+    explanation: "Check the ASCII code or use standard library helpers (`isupper()`, `islower()`). Swap lowercase and uppercase characters by adding/subtracting 32 from their ASCII value, or calling `.swapcase()` in Python."
+  },
+  {
+    id: 35,
+    title: "Longest Common Prefix",
+    problemStatement: "Find the longest common prefix string amongst an array of N strings.",
+    example: "Input: N=3, Strings=['flower', 'flow', 'flight']\nOutput: fl",
+    solution: {
+      c: `#include<stdio.h>\n#include<string.h>\nint main() {\n    int n;\n    scanf("%d", &n);\n    char s[n][100];\n    for (int i = 0; i < n; i++) scanf("%s", s[i]);\n    if (n == 0) return 0;\n    char prefix[100];\n    strcpy(prefix, s[0]);\n    for (int i = 1; i < n; i++) {\n        int j = 0;\n        while (prefix[j] && s[i][j] && prefix[j] == s[i][j]) j++;\n        prefix[j] = '\\0';\n    }\n    printf("%s", prefix);\n    return 0;\n}`,
+      python: `n = int(input())\nstrs = [input().strip() for _ in range(n)]\nif not strs: print(""); exit()\nprefix = strs[0]\nfor s in strs[1:]:\n    while not s.startswith(prefix):\n        prefix = prefix[:-1]\n        if not prefix: break\nprint(prefix)`
+    },
+    explanation: "Assume the first string as the prefix. Iterate through the remaining strings and progressively shorten the prefix until it matches the beginning of the current string. If the prefix shrinks to an empty string, stop."
+  },
+  {
+    id: 36,
+    title: "Strong Number",
+    problemStatement: "Check if a given number N is a Strong Number. A number is strong if the sum of factorials of its digits is equal to the number itself.",
+    example: "Input: 145\nOutput: YES\n(1! + 4! + 5! = 1 + 24 + 120 = 145)",
+    solution: {
+      c: `#include<stdio.h>\nint fact(int n) {\n    int f = 1;\n    for(int i = 2; i <= n; i++) f *= i;\n    return f;\n}\nint main() {\n    int n, original, sum = 0;\n    scanf("%d", &n);\n    original = n;\n    while(n > 0) {\n        sum += fact(n % 10);\n        n /= 10;\n    }\n    printf("%s", sum == original ? "YES" : "NO");\n    return 0;\n}`,
+      python: `import math\nn_str = input().strip()\nn = int(n_str)\nprint("YES" if sum(math.factorial(int(d)) for d in n_str) == n else "NO")`
+    },
+    explanation: "Extract each digit of N, calculate its factorial, and accumulate the sum. If the final sum equals the original value of N, then N is a Strong Number."
+  },
+  {
+    id: 37,
+    title: "Count Set Bits in Binary",
+    problemStatement: "Given a decimal integer N, convert it to binary and count the number of set bits (1s) in its binary representation.",
+    example: "Input: 15\nOutput: 4\n(binary: 1111)",
+    solution: {
+      c: `#include<stdio.h>\nint main() {\n    int n, count = 0;\n    scanf("%d", &n);\n    while (n > 0) {\n        count += (n & 1);\n        n >>= 1;\n    }\n    printf("%d", count);\n    return 0;\n}`,
+      python: `n = int(input())\nprint(bin(n).count('1'))`
+    },
+    explanation: "Repeatedly check the least significant bit using the bitwise AND operator `n & 1`, accumulate it into `count`, and right-shift the number by 1 bit (`n >>= 1`) until N becomes 0."
+  },
+  {
+    id: 38,
+    title: "Transpose of a Matrix",
+    problemStatement: "Find the transpose of a given R x C matrix. In the transposed matrix, columns become rows, and rows become columns.",
+    example: "Input: R=2, C=3, Matrix=[[1, 2, 3], [4, 5, 6]]\nOutput: [[1, 4], [2, 5], [3, 6]]",
+    solution: {
+      c: `#include<stdio.h>\nint main() {\n    int r, c;\n    scanf("%d %d", &r, &c);\n    int mat[r][c];\n    for (int i = 0; i < r; i++)\n        for (int j = 0; j < c; j++) scanf("%d", &mat[i][j]);\n    for (int j = 0; j < c; j++) {\n        for (int i = 0; i < r; i++) printf("%d ", mat[i][j]);\n        printf("\\n");\n    }\n    return 0;\n}`,
+      python: `r, c = map(int, input().split())\nmat = [list(map(int, input().split())) for _ in range(r)]\ntransposed = [[mat[i][j] for i in range(r)] for j in range(c)]\nfor row in transposed:\n    print(*row)`
+    },
+    explanation: "To transpose a matrix, output the elements indices swapped: iterate columns first, then rows. Access the element as `mat[row][col]`. Excellent arrays practice."
+  },
+  {
+    id: 39,
+    title: "String Compression",
+    problemStatement: "Perform basic string compression using the counts of repeated characters. If the compressed string would not be smaller than the original, print the original string.",
+    example: "Input: aabbbccc\nOutput: a2b3c3",
+    solution: {
+      c: `#include<stdio.h>\n#include<string.h>\nint main() {\n    char s[200];\n    scanf("%s", s);\n    int len = strlen(s);\n    char res[400] = "";\n    int count = 1;\n    for(int i = 0; i < len; i++) {\n        if (s[i] == s[i+1]) count++;\n        else {\n            char temp[10];\n            sprintf(temp, "%c%d", s[i], count);\n            strcat(res, temp);\n            count = 1;\n        }\n    }\n    if (strlen(res) >= len) printf("%s", s);\n    else printf("%s", res);\n    return 0;\n}`,
+      python: `s = input().strip()\nres = []\ncount = 1\nfor i in range(len(s)):\n    if i + 1 < len(s) and s[i] == s[i+1]:\n        count += 1\n    else:\n        res.append(f"{s[i]}{count}")\n        count = 1\ncompressed = "".join(res)\nprint(compressed if len(compressed) < len(s) else s)`
+    },
+    explanation: "Iterate through the string. Use a tracking counter. Compare the current character with the next. If matching, increment count. Otherwise, append character + count to output, and reset count to 1."
+  },
+  {
+    id: 40,
+    title: "Subsequence Checker",
+    problemStatement: "Given two strings A and B, determine if A is a subsequence of B. Print 'YES' or 'NO'.",
+    example: "Input: A=tcs, B=tcshiring\nOutput: YES",
+    solution: {
+      c: `#include<stdio.h>\n#include<string.h>\nint main() {\n    char a[100], b[200];\n    scanf("%s %s", a, b);\n    int i = 0, j = 0;\n    int lenA = strlen(a), lenB = strlen(b);\n    while(i < lenA && j < lenB) {\n        if (a[i] == b[j]) i++;\n        j++;\n    }\n    printf("%s", i == lenA ? "YES" : "NO");\n    return 0;\n}`,
+      python: `a = input().strip()\nb = input().strip()\niter_b = iter(b)\nprint("YES" if all(char in iter_b for char in a) else "NO")`
+    },
+    explanation: "Use two pointers, one for string A and one for string B. Iterate through both. If characters match, advance pointer A. Always advance pointer B. If pointer A reaches the end of string A, it's a valid subsequence."
   }
 ];
